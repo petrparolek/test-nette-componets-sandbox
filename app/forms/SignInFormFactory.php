@@ -6,9 +6,9 @@ use Nette;
 use Nette\Application\UI\Form;
 use Nette\Security\User;
 
-
-final class SignInFormFactory
+final class SignInFormFactory extends \App\Control
 {
+
 	use Nette\SmartObject;
 
 	/** @var FormFactory */
@@ -17,13 +17,11 @@ final class SignInFormFactory
 	/** @var User */
 	private $user;
 
-
 	public function __construct(FormFactory $factory, User $user)
 	{
 		$this->factory = $factory;
 		$this->user = $user;
 	}
-
 
 	/**
 	 * @return Form
