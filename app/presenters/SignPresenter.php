@@ -38,12 +38,12 @@ final class SignPresenter extends BasePresenter
 	 * Sign-up form factory.
 	 * @return Form
 	 */
-	protected function createComponentSignUpForm()
-	{
-		return $this->signUpFactory->create(function () {
-				$this->redirect('Homepage:');
-			});
-	}
+	/* protected function createComponentSignUpForm()
+	  {
+	  return $this->signUpFactory->create(function () {
+	  $this->redirect('Homepage:');
+	  });
+	  } */
 
 	public function actionOut()
 	{
