@@ -24,10 +24,7 @@ database:
 
 
 services:
-	- App\Model\UserManager
-	- App\Forms\FormFactory
-	- App\Forms\SignInFormFactory
-	- App\Forms\SignUpFormFactory
-	#- Andweb\Application\UI\ControlFactory
-	#- App\FrontModule\Components\FrontControlFactory
+	- App\FrontModule\Components\FrontControlFactory
+	- Andweb\Application\UI\ControlFactory
+
 	router: App\RouterFactory::createRouter
