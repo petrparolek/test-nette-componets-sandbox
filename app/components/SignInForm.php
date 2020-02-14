@@ -1,34 +1,25 @@
 <?php
 
-namespace App\Forms;
+namespace App\Components;
 
 use Nette;
-use Nette\Application\UI\Form;
-use Nette\Security\User;
 
-final class SignInFormFactory extends \App\FrontModule\Components\FrontControlFactory
+class SignInForm extends Nette\Application\UI\Control implements \App\Components\IForm
 {
 
-	use Nette\SmartObject;
+	/**
+	 * @var Nette\Security\User
+	 */
+	public $user;
 
-	/** @var FormFactory */
-	private $factory;
-
-	/** @var User */
-	private $user;
-
-	public function __construct(FormFactory $factory, User $user)
+	public function __construct(Nette\Security\User $user)
 	{
-		$this->factory = $factory;
 		$this->user = $user;
 	}
 
-	/**
-	 * @return Form
-	 */
-	public function create(\Nette\ComponentModel\IComponent $parentControl, $name, $args = [])
+	public function createComponentForm()
 	{
-		$form = $this->factory->create();
+		$form = new Nette\Application\UI\Form();
 		$form->addText('username', 'Username:')
 			->setRequired('Please enter your username.');
 
@@ -39,18 +30,26 @@ final class SignInFormFactory extends \App\FrontModule\Components\FrontControlFa
 
 		$form->addSubmit('send', 'Sign in');
 
-		$form->onSuccess[] = function (Form $form, $values) {
+		$form->onSuccess[] = function (\Nette\Application\UI\Form $form, $values) {
 			try {
 				$this->user->setExpiration($values->remember ? '14 days' : '20 minutes');
 				$this->user->login($values->username, $values->password);
-				//$this->presenter->redirect('Homepage:');
 			} catch (Nette\Security\AuthenticationException $e) {
 				$form->addError('The username or password you entered is incorrect.');
 				return;
 			}
-			//$onSuccess();
 		};
 
 		return $form;
+	}
+
+	public function render()
+	{
+		$this['form']->setDefaults(['username' => 'test']);
+		//echo $this['form'];
+		// nebo takto
+		$this['form']->render();
+		//nebo nastavit sablonu a vyrenderovat rucne v ní ...
+		//$this->template->render(__DIR__ . '/signInForm.latte');
 	}
 }

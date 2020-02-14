@@ -4,7 +4,6 @@ namespace App\Presenters;
 
 use Nette;
 use Nette\ComponentModel\IComponent;
-use App\FrontModule\Components;
 
 /**
  * Base presenter for all application presenters.
@@ -15,8 +14,6 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 	protected function createComponent($name)
 	{
 		$component = parent::createComponent($name);
-
-		
 
 		// pokud se nepodari najit tovarnicku na komponentu, zkusime autoload dle jmena
 		if (!$component instanceof IComponent) {
@@ -31,15 +28,8 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		return $component;
 	}
 
-
 	public function getControlFactory()
 	{
-		return $this->context->getByType('\\App\\FrontModule\\Components\\FrontControlFactory');
+		return $this->context->getByType('\\App\\Components\\FrontControlFactory');
 	}
-
-
-	// public function createComponentA()
-	// {
-	//     return new Components\A;
-	// }
 }

@@ -1,62 +1,66 @@
 <?php
 
-namespace Andweb\Application\UI;
+namespace App\Components;
 
-use Nette,
-	Nette\Reflection\ClassType,
-	Nette\ComponentModel\IComponent,
-	Andweb\Caching\Cache,
-	Nette\Caching\IStorage,
-    Andweb;
-    
+use Nette;
+use Nette\ComponentModel\IComponent;
+
 class ControlFactory
 {
 
-    protected $context;
+	/**
+	 * @var Nette\DI\Container
+	 */
+	protected $context;
 
-    public function __construct(Nette\Di\Container $context)
-    {
-        $this->context = $context;
-    }
+	public function __construct(Nette\Di\Container $context)
+	{
+		$this->context = $context;
+	}
 
-    public function create(IComponent $parentComponent, $name, array $args = [])
-    {
-        $component = NULL;
-        
-        $ucname = ucfirst($name);
+	public function create(IComponent $parentComponent, $name, array $args = [])
+	{
+		$component = NULL;
 
-        if ($ucname !== $name) {
+		$ucname = ucfirst($name);
 
-            $presenter = $parentComponent->presenter->getName();
-            $modulesArr = explode(':', trim($presenter, ':'));
-            array_pop($modulesArr);
+		if ($ucname !== $name) {
+			$classPossibilities = [];
 
-            $classPossibilities = ['\\App\\Components\\' . $ucname];
-            $prev = '';
+			$presenter = $parentComponent->presenter->getName();
+			$modulesArr = explode(':', trim($presenter, ':'));
+			array_pop($modulesArr);
 
-            $modulesArr[] = 'Front';
+			$classPossibilities = ['App\\Components\\' . $ucname];
+			$prev = '';
 
-            foreach ($modulesArr as $module)
-            {
-                $prev .= '\\' . $module . 'Module';
+			//auto registration of controls
+			foreach ($modulesArr as $module) {
+				$prev .= '\\' . $module . 'Module';
 
-                $classPossibilities[] = '\\App' . $prev . '\Components\\' . $ucname;
-            }
+				$classPossibilities[] = 'App' . $prev . '\Components\\' . $ucname;
+			}
 
-            $classPossibilities = array_reverse($classPossibilities);
-            
-            foreach($classPossibilities as $class)
-            {
-                
-                if (class_exists($class, true))
-                {
-                    $component = $this->context->createInstance($class, $args);
-                    $this->context->callInjects($component);
-                    break;
-                }
-            }
-        }
+			//manual registration of registered controls as service implemented by App\Components\IForm
+			foreach (get_declared_classes() as $className) {
+				if (in_array(IForm::class, class_implements($className))) {
+					$classPossibilities[] = $className;
+				}
+			}
 
-        return $component;
-    }
+			$classPossibilities = array_unique($classPossibilities);
+
+			$classPossibilities = array_reverse($classPossibilities);
+
+			foreach ($classPossibilities as $class) {
+				if (class_exists($class, true)) {
+					$component = $this->context->createInstance($class, $args);
+					$this->context->callInjects($component);
+					break;
+				}
+			}
+		}
+
+		return $component;
+	}
 }
