@@ -2,24 +2,42 @@
 
 namespace App\Components;
 
+use App\Forms\FormFactory;
 use Nette;
+use Nette\Application\UI\Control;
+use Nette\Application\UI\Form;
+use Nette\Security\User;
 
-class SignInForm extends Nette\Application\UI\Control implements \App\Components\IForm
+final class SignInForm extends Control
 {
 
-	/**
-	 * @var Nette\Security\User
-	 */
-	public $user;
+	/** @var FormFactory */
+	private $factory;
 
-	public function __construct(Nette\Security\User $user)
+	/** @var User */
+	private $user;
+
+	public function __construct(FormFactory $factory, User $user)
 	{
+		$this->factory = $factory;
 		$this->user = $user;
 	}
 
+	public function render()
+	{
+		//echo $this['form'];
+		// nebo takto
+		//$this['form']->render();
+		//nebo nastavit sablonu a vyrenderovat rucne v ní ...
+		$this->template->render(__DIR__ . '/signInForm.latte');
+	}
+
+	/**
+	 * @return Form
+	 */
 	public function createComponentForm()
 	{
-		$form = new Nette\Application\UI\Form();
+		$form = $this->factory->create();
 		$form->addText('username', 'Username:')
 			->setRequired('Please enter your username.');
 
@@ -30,7 +48,7 @@ class SignInForm extends Nette\Application\UI\Control implements \App\Components
 
 		$form->addSubmit('send', 'Sign in');
 
-		$form->onSuccess[] = function (\Nette\Application\UI\Form $form, $values) {
+		$form->onSuccess[] = function (Form $form, $values) {
 			try {
 				$this->user->setExpiration($values->remember ? '14 days' : '20 minutes');
 				$this->user->login($values->username, $values->password);
@@ -41,15 +59,5 @@ class SignInForm extends Nette\Application\UI\Control implements \App\Components
 		};
 
 		return $form;
-	}
-
-	public function render()
-	{
-		$this['form']->setDefaults(['username' => 'test']);
-		//echo $this['form'];
-		// nebo takto
-		$this['form']->render();
-		//nebo nastavit sablonu a vyrenderovat rucne v ní ...
-		//$this->template->render(__DIR__ . '/signInForm.latte');
 	}
 }

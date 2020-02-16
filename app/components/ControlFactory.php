@@ -62,6 +62,10 @@ class ControlFactory
 			}
 		}
 
+		if (!$component instanceof IComponent) {
+			throw new Nette\UnexpectedValueException("Automatic creation component did not return or create the desired component. Component name: " . $name);
+		}
+
 		return $component;
 	}
 }

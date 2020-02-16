@@ -2,7 +2,7 @@
 
 namespace App\Presenters;
 
-final class SignPresenter extends \App\Presenters\BasePresenter
+final class SignPresenter extends BasePresenter
 {
 
 	/** @persistent */
@@ -11,7 +11,14 @@ final class SignPresenter extends \App\Presenters\BasePresenter
 	public function actionIn()
 	{
 		$this['signInForm']['form']->onSuccess[] = function ($form, $values) {
-			$this->flashMessage('test abc');
+			$this->restoreRequest($this->backlink);
+			$this->redirect('Homepage:');
+		};
+	}
+
+	public function actionUp()
+	{
+		$this['signUpForm']['form']->onSuccess[] = function ($form, $values) {
 			$this->redirect('Homepage:');
 		};
 	}
