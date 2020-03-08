@@ -54,10 +54,11 @@ class ControlFactory
 			$classPossibilities = array_reverse($classPossibilities);
 
 			foreach ($classPossibilities as $class) {
-				if (class_exists($class, true)) {
-					$component = $this->context->createInstance($class, $args);
-					$this->context->callInjects($component);
-					break;
+				if (strpos($class, $ucname)) {
+					if (class_exists($class)) {
+						$component = $this->context->createInstance($class, $args);
+						$this->context->callInjects($component);
+					}
 				}
 			}
 		}
