@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Components;
+namespace Test\Components;
 
 use App\Components\IForm;
 use App\Forms\FormFactory;

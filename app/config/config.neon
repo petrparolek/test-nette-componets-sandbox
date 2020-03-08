@@ -26,7 +26,8 @@ database:
 services:
 	- App\Components\ControlFactory
 	- App\Forms\FormFactory
+	- Test\Components\FooForm
 	#- App\Forms\SignInFormFactory
-	#- App\Forms\SignUpFormFactory
+	- Test\Components\SignUpForm
 	- App\Model\UserManager
 	router: App\RouterFactory::createRouter

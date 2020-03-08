@@ -42,11 +42,11 @@ class ControlFactory
 			}
 
 			//manual registration of registered controls as service implemented by App\Components\IForm
-			if ($this->context->findByType(IForm::class)) {
-				$instance = $this->context->getByType(IForm::class);
-				$className = get_class($instance);
+			$services = $this->context->findByType(IForm::class);
+			foreach ($services as $serviceName) {
+				$service = $this->context->getService($serviceName);
 
-				$classPossibilities[] = $className;
+				$classPossibilities[] = get_class($service);
 			}
 
 			$classPossibilities = array_unique($classPossibilities);
